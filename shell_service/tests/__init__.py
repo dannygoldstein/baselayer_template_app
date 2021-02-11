@@ -22,7 +22,7 @@ def api(
         URL parameters, in GET
     host : str
         Defaults to http://localhost on the port specified in the
-        SkyPortal configuration file.
+        shell_service configuration file.
     token : str
         A token, for when authentication is needed.  This is placed in the
         `Authorization` header.

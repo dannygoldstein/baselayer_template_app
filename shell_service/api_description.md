@@ -81,6 +81,9 @@ Limitations:
 
   * There is not currently a notion of hardware resources: the jobs are run (asynchronously) on the webserver machine, using asyncio to delegate the execution and scheduling of subprocesses to the operating system. In a more realistic situation you would probably want to run the jobs on specialized compute hardware, this could probably be achieved using a  tool like AWS Batch to manage Amazon resource pools.
 
+  * Continuous integration would help ensure the build reliability, correct stipulation of requirements, cross-platform compatbility, etc.
+  
+
 Comments: None.
 
 Time: This took me about 7 hours, spread over 2 days. 
@@ -142,7 +145,7 @@ Restart PostgreSQL:
 sudo service postgresql restart
 ```
 
-## Launching the application for testing
+### Launching the application for testing
 
 Once you have installed your dependencies and set up your
  postgres server, do:
@@ -153,7 +156,7 @@ make test
 
 to run the tests.
 
-## Launching the application for "production"
+### Launching the application for "production"
 
 1. Initialize the database with `make db_init` (this only needs to
    happen once).
