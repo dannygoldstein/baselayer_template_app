@@ -35,6 +35,13 @@ class Error(Response):
     status = ApispecEnumField(Enum("status", ["error"]), required=True)
 
 
+class JobPostSchema(_Schema):
+    id = fields.String(required=True, description="Job name.")
+    code = fields.String(
+        required=True, description="The content of the shell script to execute."
+    )
+
+
 def success(schema_name, base_schema=None):
     schema_fields = {
         "status": ApispecEnumField(Enum("status", ["success"]), required=True),
@@ -144,3 +151,4 @@ def register_components(spec):
 Response = Response()
 Error = Error()
 Success = success("Success")
+JobPostSchema = JobPostSchema()

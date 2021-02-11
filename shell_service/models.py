@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from baselayer.app.models import AccessibleIfUserMatches, Base, User, init_db
 
 from enum import Enum
+from . import schema
 
 JOB_STATES = ("READY", "RUNNING", "COMPLETE", "FAILED", "SERVER_ERROR")
 job_states = sa.Enum(*JOB_STATES, name="job_states", validate_strings=True)
@@ -25,12 +26,17 @@ class Job(Base):
         sa.Integer,
         sa.ForeignKey("users.id", ondelete="CASCADE"),
         doc="User ID of the job submitter..",
+        nullable=False,
     )
     submitter = relationship(
         "User", doc="The User that submitted this job.", back_populates="jobs"
     )
-    code = sa.Column(sa.Text, doc="The content of the shell script to execute.")
-    status = sa.Column(job_states, default="READY", doc="Status of the job.")
+    code = sa.Column(
+        sa.Text, doc="The content of the shell script to execute.", nullable=False
+    )
+    status = sa.Column(
+        job_states, default="READY", doc="Status of the job.", nullable=False
+    )
     return_code = sa.Column(sa.Integer, doc="Return code of the executed script.")
     stdout = sa.Column(
         sa.Text,
@@ -43,3 +49,4 @@ class Job(Base):
 
 
 User.jobs = relationship("Job", back_populates="submitter")
+schema.setup_schema()

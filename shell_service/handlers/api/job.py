@@ -1,12 +1,15 @@
 import tornado.web
 import tornado.ioloop
 
+from marshmallow import ValidationError
+
 import asyncio
 
-from baselayer.app.handlers import BaseHandler
+from ..base import BaseHandler
 from baselayer.app.access import auth_or_token
 from baselayer.app.models import DBSession
 from shell_service.models import Job
+from shell_service.schema import JobPostSchema
 
 
 class JobHandler(BaseHandler):
@@ -75,13 +78,15 @@ class JobHandler(BaseHandler):
             content:
               application/json:
                 schema: Error
-
         """
         user_data = self.get_json()
         try:
-            job = JobSchema.load(user_data)
+            validated_user_data = JobPostSchema.load(user_data)
         except ValidationError as e:
             return self.error(e.normalized_messages())
+        job = Job(**validated_user_data)
+        job.submitter = self.associated_user_object
+
         DBSession().add(job)
         self.finalize_transaction()
 
@@ -91,13 +96,15 @@ class ExecutionHandler(BaseHandler):
     async def get(self, job_id):
         """
         ---
-        description: Submit a new job to the service
+        description: Execute a submitted job
         tags:
-          - jobs
-        requestBody:
-          content:
-            application/json:
-              schema: JobPostSchema
+          - execute
+        parameters:
+          - in: path
+            name: job_id
+            required: true
+            schema:
+              type: string
         responses:
           200:
             content:

@@ -1,6 +1,13 @@
 import tornado.web
 from . import models, model_util, openapi
-from .handlers.job import JobHandler, ExecutionHandler
+from shell_service.handlers.api.job import JobHandler, ExecutionHandler
+
+
+shell_service_handlers = [
+    #    (r'/some_url(/.*)?', MyTornadoHandler),
+    (r"/jobs(/.*)?", JobHandler),
+    (r"/execute/(.*)", ExecutionHandler),
+]
 
 
 def make_app(cfg, baselayer_handlers, baselayer_settings, process=None, env=None):
@@ -29,11 +36,7 @@ def make_app(cfg, baselayer_handlers, baselayer_settings, process=None, env=None
         print("  in the configuration file!")
         print("!" * 80)
 
-    handlers = baselayer_handlers + [
-        #    (r'/some_url(/.*)?', MyTornadoHandler),
-        (r"/jobs", JobHandler),
-        (r"/execute", ExecutionHandler),
-    ]
+    handlers = baselayer_handlers + shell_service_handlers
 
     settings = baselayer_settings
     settings.update({})  # Specify any additional Tornado settings here

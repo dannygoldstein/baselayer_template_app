@@ -8,3 +8,15 @@ baselayer/Makefile:
 	@$(MAKE) --no-print-directory -C . -f baselayer/Makefile $@
 
 .PHONY: Makefile force
+
+api-docs: FLAGS := $(if $(FLAGS),$(FLAGS),--config=config.yaml)
+api-docs: | dependencies
+	@PYTHONPATH=. python tools/openapi/build-spec.py $(FLAGS)
+	npx redoc-cli@0.9.8 bundle openapi.json \
+          --title "SkyPortal API docs" \
+          --options.theme.logo.gutter 2rem \
+          --cdn
+	rm -f openapi.{yml,json}
+	mkdir -p doc/_build/html
+	mv redoc-static.html doc/openapi.html
+
