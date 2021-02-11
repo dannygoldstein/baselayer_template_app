@@ -1,4 +1,4 @@
 factory-boy==3.2.0
-marshmallow==3.10.0
-marshmallow-sqlalchemy==0.24.1
+marshmallow==3.0.0
+marshmallow-sqlalchemy==0.20.0
 marshmallow-enum==1.5.1

@@ -224,3 +224,44 @@ def test_invalid_job_names_are_rejected(user, user_token, super_admin_user_token
 
     assert status == 400
     assert data["status"] == "error"
+
+
+def test_token_admin_user_can_submit_and_execute_job_expected_to_fail(
+    super_admin_user, super_admin_user_token
+):
+
+    job_name = f"hello_world_{uuid.uuid4().hex}"
+    job_script = "ecfdho 'hello world'"
+
+    status, data = api(
+        "POST",
+        "jobs",
+        data={"id": job_name, "code": job_script},
+        token=super_admin_user_token,
+    )
+
+    assert status == 200
+    assert data["status"] == "success"
+
+    status, data = api("GET", f"execute/{job_name}", token=super_admin_user_token)
+
+    assert status == 200
+    assert data["status"] == "success"
+
+    start = time.time()
+    while True:
+        # wait for the job to finish
+        current = time.time()
+        if current - start >= 10:
+            raise TimeoutError("Server response timed out.")
+
+        status, data = api("GET", f"jobs/{job_name}", token=super_admin_user_token)
+
+        assert status == 200
+        assert data["status"] == "success"
+        assert data["data"]["submitter_id"] == super_admin_user.id
+        if data["data"]["status"] not in ["READY", "RUNNING"]:
+            break
+
+    assert data["data"]["status"] == "FAILED"
+    assert data["data"]["return_code"] != 0
