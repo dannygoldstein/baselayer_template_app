@@ -1,6 +1,6 @@
 database:
-    database: template_app_test
-    user: template_app
+    database: shell_service_test
+    user: shell_service
     host: localhost
     port: 5432
 
