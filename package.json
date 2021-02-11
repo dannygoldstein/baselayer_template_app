@@ -1,9 +1,5 @@
 {
   "name": "shell_service",
-  "scripts": {
-    "build": "make bundle",
-    "test": "eslint --ext .jsx,.js static/js && ke test"
-  },
   "dependencies": {
     "check-dependencies": "1.1.0",
     "redoc": "2.0.0-rc.31",
