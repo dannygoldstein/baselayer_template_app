@@ -3,7 +3,7 @@ functionality. To use it, you will need an API token.
 The purposes of this demo, you may use the system provisioned token stored
 inside of `.tokens.yaml`.
 
-### Accessing the SkyPortal API
+### Accessing the shell_service API
 
 Once you have a token, you may access the service programmatically as
 follows.
@@ -35,7 +35,7 @@ curl -s -H 'Authorization: token ea70a5f0-b321-43c6-96a1-b2de225e0339' http://lo
 
 ### Response
 
-In the above examples, the SkyPortal server is located at
+In the above examples, the shell_service server is located at
 `http://localhost:5000`. In case of success, the HTTP response is 200:
 
 ```

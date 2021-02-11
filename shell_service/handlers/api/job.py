@@ -53,10 +53,10 @@ class JobHandler(BaseHandler):
 
         if job_id is not None:
             job = Job.get_if_accessible_by(
-                self.current_user, job_id, raise_if_none=True
+                job_id, self.current_user, raise_if_none=True
             )
-            return job
-        return Job.get_records_accessible_by(self.current_user)
+            return self.success(data=job)
+        return self.success(data=Job.get_records_accessible_by(self.current_user))
 
     @auth_or_token
     def post(self):
@@ -85,10 +85,14 @@ class JobHandler(BaseHandler):
         except ValidationError as e:
             return self.error(e.normalized_messages())
         job = Job(**validated_user_data)
+
+        if len(job.id.split()) > 1 or len(job.id) == 0:
+            return self.error("Invalid job name, must be a single non-empty token.")
         job.submitter = self.associated_user_object
 
         DBSession().add(job)
         self.finalize_transaction()
+        return self.success()
 
 
 class ExecutionHandler(BaseHandler):
@@ -117,7 +121,7 @@ class ExecutionHandler(BaseHandler):
 
         """
         job = Job.get_if_accessible_by(
-            self.current_user, job_id, raise_if_none=True, mode="execute"
+            job_id, self.current_user, raise_if_none=True, mode="execute"
         )
 
         if job.status != "READY":
@@ -132,6 +136,11 @@ class ExecutionHandler(BaseHandler):
 
     async def _execute_job(self, job):
         """Execute a job asynchronously."""
+
+        # need to re-add the job to the session as this is
+        # executing as a callback
+
+        DBSession().add(job)
         job.status = "RUNNING"
         self.finalize_transaction()
 
@@ -142,9 +151,14 @@ class ExecutionHandler(BaseHandler):
         )
 
         stdout, stderr = await proc.communicate()
+
+        # need to re-add the job to the session as the asynchronous calls
+        # above can cause the job to be removed from the session
+
+        DBSession().add(job)
         job.return_code = proc.returncode
-        job.stdout = stdout
-        job.stderr = stderr
+        job.stdout = stdout.decode()
+        job.stderr = stderr.decode()
 
         if job.return_code == 0:
             job.status = "COMPLETE"

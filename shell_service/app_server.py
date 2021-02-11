@@ -1,12 +1,13 @@
 import tornado.web
+from baselayer.app import model_util as bmu
 from . import models, model_util, openapi
 from shell_service.handlers.api.job import JobHandler, ExecutionHandler
 
 
 shell_service_handlers = [
     #    (r'/some_url(/.*)?', MyTornadoHandler),
-    (r"/jobs(/.*)?", JobHandler),
-    (r"/execute/(.*)", ExecutionHandler),
+    (r"/api/jobs(/.*)?", JobHandler),
+    (r"/api/execute/(.*)", ExecutionHandler),
 ]
 
 
@@ -45,7 +46,7 @@ def make_app(cfg, baselayer_handlers, baselayer_settings, process=None, env=None
     models.init_db(**cfg["database"])
 
     if process == 0:
-        model_util.create_tables(add=env.debug)
+        bmu.create_tables(add=env.debug)
     model_util.refresh_enums()
     model_util.setup_permissions()
     app.cfg = cfg
