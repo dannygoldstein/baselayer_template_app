@@ -1,8 +1,27 @@
 from shell_service.models import Job, User
-from baselayer.app.models import DBSession
+from baselayer.app.models import DBSession, init_db
+from baselayer.app.config import load_config
+from baselayer.app.env import load_env
+from baselayer.app.test_util import set_server_url
+
+import pathlib
+import os
+
+from tempfile import mkdtemp
 
 import factory
 import uuid
+
+
+TMP_DIR = mkdtemp()
+env, cfg = load_env()
+
+print("Loading test configuration from _test_config.yaml")
+basedir = pathlib.Path(os.path.dirname(__file__))
+cfg = load_config([(basedir / "../../test_config.yaml").absolute()])
+set_server_url(f'http://localhost:{cfg["ports.app"]}')
+print("Setting test database to:", cfg["database"])
+init_db(**cfg["database"])
 
 
 class BaseMeta:
