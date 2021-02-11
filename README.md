@@ -1,32 +1,5 @@
-# Baselayer Template App
+For writeup and documentation, open static/login.html in a web browser.
 
-This template application shows how to leverage Cesium's BaseLayer to
-get a batteries-included web application.  It includes:
+Once you have launched the application with `make run`, navigate to localhost:5000 in the web browser to see the API docs rendered with fully correct endpoints (instead of the file:// you see when reading the raw HTML file that is not served over the webserver).
 
-- A Tornado-based Python web application that can be customized to your liking
-- WebSockets
-- JavaScript 6 compilation via Babel, with a Redux & React frontend
-- Process management via supervisord
-- Proxy configuration via nginx
-- Authentication (currently using Google) via Python Social Auth
-- Distributed task computation, via `dask` and `distributed`
 
-## Customization guide
-
-Clone this repository:
-
- `git clone --recursive git://github.com/cesium-ml/baselayer_template_app`
-
-Start the application with:
-
- `make run`
-
-In another window, run `make log`.
-
-You should now be able to navigate to `http://localhost:5000`.
-
-Run `make help` for descriptions of other Make targets.
-
-## Documentation
-
-Please refer to http://cesium-ml.org/baselayer/
