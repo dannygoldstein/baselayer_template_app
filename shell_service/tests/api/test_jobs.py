@@ -90,7 +90,9 @@ def test_token_admin_user_can_submit_and_execute_job(
     assert data["data"]["return_code"] == 0
 
 
-def test_token_user_submit_and_execute_50_jobs_at_once_no_blocking(user, user_token):
+def test_token_user_submit_and_execute_50_jobs_at_once_without_blocking(
+    user, user_token
+):
 
     job_names = [f"long_hello_world_{uuid.uuid4().hex}" for _ in range(50)]
     job_script = "sleep 2; echo 'hello world'"

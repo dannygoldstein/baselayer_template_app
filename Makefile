@@ -10,7 +10,7 @@ baselayer/Makefile:
 .PHONY: Makefile force
 
 api-docs: FLAGS := $(if $(FLAGS),$(FLAGS),--config=config.yaml)
-api-docs: | dependencies
+api-docs: | 
 	@PYTHONPATH=. python tools/openapi/build-spec.py $(FLAGS)
 	npx redoc-cli@0.9.8 bundle openapi.json \
           --title "shell_service API docs" \
